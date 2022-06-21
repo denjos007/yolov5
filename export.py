@@ -361,8 +361,9 @@ def export_edgetpu(keras_model, im, file, prefix=colorstr('Edge TPU:')):
         LOGGER.info(f'\n{prefix} starting export with Edge TPU compiler {ver}...')
         f = str(file).replace('.pt', '-int8_edgetpu.tflite')  # Edge TPU model
         f_tfl = str(file).replace('.pt', '-int8.tflite')  # TFLite model
+        f_dir = f[0:f.rfind('/')]
 
-        cmd = f"edgetpu_compiler -s {f_tfl}"
+        cmd = f"edgetpu_compiler -s -o {f_dir} {f_tfl}"
         subprocess.run(cmd, shell=True, check=True)
 
         LOGGER.info(f'{prefix} export success, saved as {f} ({file_size(f):.1f} MB)')
