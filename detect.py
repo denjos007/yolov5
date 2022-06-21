@@ -91,7 +91,9 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
     device = select_device(device)
     model = DetectMultiBackend(weights, device=device, dnn=dnn, data=data)
     stride, names, pt, jit, onnx, engine = model.stride, model.names, model.pt, model.jit, model.onnx, model.engine
-    imgsz = check_img_size(imgsz, s=stride)  # check image size
+    model_types = DetectMultiBackend.model_type(str(weights[0] if isinstance(weights, list) else weights))
+    if not model_types[8] and not model_types[9]:  # Check if the model is not tflite which need fixed input layer
+        imgsz = check_img_size(imgsz, s=stride)  # check image size
 
     # Half
     half &= (pt or jit or onnx or engine) and device.type != 'cpu'  # FP16 supported on limited backends with CUDA
